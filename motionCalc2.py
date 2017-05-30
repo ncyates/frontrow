@@ -1,3 +1,4 @@
+#Using a non-multithreaded approach
 # Necessary Packages
 from skimage.measure import compare_ssim as ssim
 import imutils
@@ -32,6 +33,7 @@ def main(vid):
         gray = cv2.GaussianBlur(gray, (21, 21), 0)
         compare_frames(firstFrame, gray)
         firstFrame = copy.deepcopy(gray)
+        camera.read() #uncomment to skip a frame each round
 
     global s
     s = s / count

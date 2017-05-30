@@ -3,10 +3,18 @@ from os import listdir
 from os import path
 import time
 import sys
+#import thread
+from multiprocessing import Process
+#from multiprocessing import Pool
 #import player
 
 start_time = time.time()
 
+
+#def run_mult(clips):
+    #print(clips)
+    #os.system('python multiProc.py ' + str(clips))
+    #return
 """
 Assumptions:
     -- We are accepting a command line parameter that is the path to a directory containing four directories. 
@@ -26,6 +34,7 @@ Questions:
 # TODO: Output helpful error message for erroneous input e.g. "usage = ... " etc.
 # TODO: Null checking on folders / files
 # TODO: Prevent blocking if a file can't be found in a folder (use a timer?)
+# TODO: Get and send playlist argument
 
 # mainDir is the path of the parent directory that holds the directory for each camera.
 mainDir = sys.argv[1]
@@ -40,7 +49,6 @@ for dir in dirs:
         camList.append(dir)
 #print('\n\nThe cameras are: ' + str(camList))  # test camList
 
-
 # clipNumber is an index for the nth clip we want to look for in the camera.
 clipNumber = 0
 
@@ -54,7 +62,7 @@ clipNamePrefix = 'out'
 clipNameExt = '.mp4'
 
 # MAX_FILES is the maximum expected number of clips per camera.
-MAX_CLIPS = 10
+MAX_CLIPS = 100
 
 # CAMERA_COUNT is the number of cameras.
 CAMERA_COUNT = len(camList)
@@ -65,7 +73,11 @@ If we find it in a directory, add the path to the clipSet
 
 Currently an all-or-nothing approach -- will block if one or more files are not found
 """
-os.system('python player.py')
+#os.system('python player.py')
+playlist = open('playlist.xspf', 'w')
+playlist.write('<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n <playlist version=\"1\" xmlns=\"http://xspf.org/ns/0/\">\n    <trackList>\n')
+playlist.close()
+
 while clipNumber < MAX_CLIPS:
 
     currentClip = clipNamePrefix + (str(clipNumber)).zfill(4) + clipNameExt  # currentClip is the name of the clip we are looking for.
@@ -77,7 +89,7 @@ while clipNumber < MAX_CLIPS:
     # clipSet is a list containing the file paths of the nth clip from each camera.
     clipSet = []
 
-    print ('checking ' + str(clipNumber))
+    print ('processing ' + str(currentClip) + ' files...')
     while False in cameras.itervalues():
         #print('\n')
         #print('Not all ' + currentClip + ' files have been found')
@@ -92,8 +104,15 @@ while clipNumber < MAX_CLIPS:
                     clipSet.append(camera + '/' + currentClip)
                     cameras[camera] = True
     #print('\n\tcalling processor with: \n\t python processor.py ' + str(clipSet))
+    #if __name__ == '__main__':
+        #p = Process(target = run_mult, args = (clipSet,))
+        #p.start()
     os.system('python multiProc.py ' + str(clipSet))
     clipNumber +=1
 
+
+playlist = open('playlist.xspf', 'a')
+playlist.write('    </trackList>\n </playlist>')
+playlist.close()
 # print the elapsed time of processing the clips
 print("%s seconds" % (time.time() - start_time))

@@ -15,7 +15,8 @@ if len(sys.argv) > 1:
 
     while True:
         grabbed, frame = camera.read()
-        #frame = imutils.resize(frame, width=500)
+        #frame = imutils.resize(frame)
+        #frame = cv2.resize(frame,None,fx = 1, fy = 1)
 
         cv2.imshow('',frame)
         cv2.waitKey(1)

@@ -1,4 +1,5 @@
-# Necessary Packages
+#Using a multithreaded approach
+#  Necessary Packages
 import time
 import copy
 import cv2
@@ -30,6 +31,7 @@ def main(vid):
         gray = cv2.GaussianBlur(gray, (21, 21), 0)
         compare_frames(firstFrame, gray)
         firstFrame = copy.deepcopy(gray)
+        fvs.read() #uncomment to skip a frame each round
 
     fvs.stop()
     global s
